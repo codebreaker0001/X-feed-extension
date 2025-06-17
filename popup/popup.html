@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 350px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .account-list {
+      margin: 15px 0;
+    }
+    .account-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #e1e8ed;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .account-item.active {
+      background-color: #1da1f2;
+      color: white;
+    }
+    button {
+      background-color: #1da1f2;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1991db;
+    }
+    .add-account {
+      width: 100%;
+      margin-top: 10px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h3>X Feed Viewer</h3>
+  </div>
+  
+  <div class="account-section">
+    <h4>Active Account</h4>
+    <div id="current-account">Your Feed</div>
+    
+    <h4>Shared Accounts</h4>
+    <div id="account-list" class="account-list">
+      <!-- Accounts will be populated here -->
+    </div>
+    
+    <div class="add-section">
+      <input type="text" id="username" placeholder="Username">
+      <input type="password" id="auth-token" placeholder="Auth Token">
+      <button class="add-account" id="add-account">Add Account</button>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
