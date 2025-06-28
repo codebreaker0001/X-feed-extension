@@ -3,37 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <title>Twitter Feed</title>
-
-  <!-- Font Awesome for Twitter icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-  <!-- Your Styles -->
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  <div class="container">
+  <div class="top-bar">
+    <label class="switch">
+      <input type="checkbox" id="toggle-theme">
+      <span class="slider"></span>
+    </label>
+  </div>
 
-    <!-- Dark Mode Toggle (Top-right corner) -->
-    <div class="top-bar">
-      <label class="switch">
-        <input type="checkbox" id="toggle-theme">
-        <span class="slider"></span>
-      </label>
+  <div class="page-container">
+
+    <!-- Left Section: User Tweets -->
+    <div class="sidebar" id="user-tweets">
+      <h3>User Tweets</h3>
     </div>
 
-    <!-- Input Section -->
-    <h2>Enter Tokens</h2>
-    <input type="text" id="auth_token" placeholder="auth_token" />
-    <input type="text" id="ct0" placeholder="ct0" />
-    <button id="fetch">Fetch Timeline</button>
+    <!-- Middle Section: Feed -->
+    <div class="main-feed">
+      <h2>Enter Tokens</h2>
+      <input type="text" id="auth_token" placeholder="auth_token" />
+      <input type="text" id="ct0" placeholder="ct0" />
+      <button id="fetch">Fetch Timeline</button>
+      <div id="feed"></div>
+    </div>
 
-    <!-- Tweets Section -->
-    <div id="tweets"></div>
+    <!-- Right Section: Followers, Following, Friends -->
+    <div class="sidebar right-sidebar">
+      <div class="user-section" id="followers">
+        <h3>Followers</h3>
+      </div>
+      <div class="user-section" id="following">
+        <h3>Following</h3>
+      </div>
+      <div class="user-section" id="friends">
+        <h3>Friends</h3>
+      </div>
+    </div>
 
   </div>
 
-  <!-- Your JavaScript -->
   <script src="popup.js"></script>
 </body>
 </html>

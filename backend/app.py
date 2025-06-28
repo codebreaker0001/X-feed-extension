@@ -154,7 +154,7 @@ async def get_user_following(data: TokenInput):
     
     return {"following": following_list}
 
-app.post("/getUserFriends")
+@app.post("/getUserFriends")
 async def get_user_friends(data: TokenInput):
     client = Client()
     client.set_cookies({
@@ -179,4 +179,4 @@ async def get_user_friends(data: TokenInput):
 
 
 
-asyncio.run(get_user_followers())
+# asyncio.run(get_user_followers())
