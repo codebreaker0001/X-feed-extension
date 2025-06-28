@@ -66,7 +66,7 @@ async def get_user_tweets(data: TokenInput):
         "ct0": data.ct0
     })
 
-    userId = client.user_id()
+    # userId = await client.user_id()
     tweets = await client.get_user_tweets(count=10)
 
     tweet_list = []
@@ -103,16 +103,18 @@ async def get_user_tweets(data: TokenInput):
 
 @app.post("/getUserFollowers")
 
-async def get_user_followers(data: TokenInput):
+async def get_user_followers(data :TokenInput):
     client = Client()
     client.set_cookies({
         "auth_token": data.auth_token,
         "ct0": data.ct0
     })
 
-    userId = client.user_id()
+    userId = await client.user_id()
     followers = await client.get_user_followers(userId, count=10)
 
+    for f in followers:
+        print(f)
     follower_list = []
 
     for follower in followers:
@@ -120,7 +122,7 @@ async def get_user_followers(data: TokenInput):
             "id": follower.id,
             "name": follower.name,
             "screen_name": follower.screen_name,
-            "profile_image": follower.profile_image_url_https
+            # "profile_image": follower.profile_image_url_https
         })
     
     return {"followers": follower_list}
@@ -134,9 +136,12 @@ async def get_user_following(data: TokenInput):
         "ct0": data.ct0
     })
 
-    userId = client.user_id()
+    userId = await  client.user_id()
     following = await client.get_user_following(userId, count=10)
 
+    
+    for f in following:
+        print(f)
     following_list = []
 
     for user in following:
@@ -144,7 +149,7 @@ async def get_user_following(data: TokenInput):
             "id": user.id,
             "name": user.name,
             "screen_name": user.screen_name,
-            "profile_image": user.profile_image_url_https
+            # "profile_image": user.profile_image_url_https
         })
     
     return {"following": following_list}
@@ -157,7 +162,7 @@ async def get_user_friends(data: TokenInput):
         "ct0": data.ct0
     })
 
-    userId = client.user_id()
+    userId = await client.user_id()
     friends = await client.get_latest_friends(userId, count=10)
 
     friend_list = []
@@ -167,7 +172,11 @@ async def get_user_friends(data: TokenInput):
             "id": friend.id,
             "name": friend.name,
             "screen_name": friend.screen_name,
-            "profile_image": friend.profile_image_url_https
+            # "profile_image": friend.profile_image_url_https
         })
     
     return {"friends": friend_list}
+
+
+
+asyncio.run(get_user_followers())
