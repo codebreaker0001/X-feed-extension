@@ -20,7 +20,8 @@ document.getElementById("fetch").addEventListener("click", async () => {
 
     const data = await res.json();
     container.innerHTML = ""; // Clear loader
-
+    console.log(data);
+    
     data.tweets.forEach(tweet => {
       const el = document.createElement("div");
       el.className = "tweet-card";
