@@ -9,12 +9,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://x-feed-extension.up.railway.app/getUserFollowers",
-        "https://x-feed-extension.up.railway.app/getUserFollowing",
-        "https://x-feed-extension.up.railway.app/getUserFriends",
-        "https://x-feed-extension.up.railway.app/timeline",
-        "https://x-feed-extension.up.railway.app/getUserTweets",
-        "https://x-feed-extension.up.railway.app",
+        "https://x-feed-extension.up.railway.app"  ,
         "chrome-extension://famgpjoalpgadcpcapldkfjnodfijgcj"  # your extension ID
     ],
     allow_credentials=True,
