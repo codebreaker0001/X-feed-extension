@@ -20,12 +20,21 @@ document.getElementById("fetch").addEventListener("click", async () => {
 
 async function fetchSection(endpoint, bodyData, containerId, renderFunction) {
   try {
-    // ✅ Correct API URL
+    // ✅ Enhanced fetch with better CORS handling
     const res = await fetch(`https://x-feed-extension.up.railway.app/${endpoint}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      mode: "cors", // Explicitly set CORS mode
+      credentials: "omit", // Don't send credentials to avoid preflight issues
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
       body: JSON.stringify(bodyData)
     });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
 
     const data = await res.json();
     if (endpoint === "timeline") {
@@ -40,13 +49,51 @@ async function fetchSection(endpoint, bodyData, containerId, renderFunction) {
   } catch (error) {
     console.error(`Error fetching ${endpoint}:`, error);
     const container = document.getElementById(containerId);
-    container.innerHTML = `<p>Failed to load ${endpoint.replace('getUser', '').replace('timeline', 'timeline')}. Please check your tokens.</p>`;
+    
+    // ✅ Better error handling with retry suggestion
+    if (error.message.includes('CORS') || error.message.includes('Failed to fetch')) {
+      container.innerHTML = `
+        <p style="color: red;">
+          CORS Error: Unable to connect to server.<br>
+          <small>Try refreshing the page or check if the server is running.</small>
+        </p>
+      `;
+    } else {
+      container.innerHTML = `<p>Failed to load ${endpoint.replace('getUser', '').replace('timeline', 'timeline')}. Please check your tokens.</p>`;
+    }
+  }
+}
+
+// ✅ Alternative fetch function using no-cors mode (if above doesn't work)
+async function fetchSectionNoCors(endpoint, bodyData, containerId, renderFunction) {
+  try {
+    const res = await fetch(`https://x-feed-extension.up.railway.app/${endpoint}`, {
+      method: "POST",
+      mode: "no-cors", // This bypasses CORS but returns opaque response
+      headers: { 
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(bodyData)
+    });
+    
+    // Note: With no-cors, we can't read the response
+    // This is mainly for testing if the request goes through
+    console.log('Request sent successfully (no-cors mode)');
+    
+  } catch (error) {
+    console.error(`Error with no-cors fetch:`, error);
   }
 }
 
 function renderTweets(tweets, containerId) {
   const container = document.getElementById(containerId);
   container.innerHTML = "";
+  
+  if (!tweets || tweets.length === 0) {
+    container.innerHTML = "<p>No tweets found.</p>";
+    return;
+  }
+  
   tweets.forEach(tweet => {
     const el = document.createElement("div");
     el.className = "tweet-card";
@@ -82,6 +129,11 @@ function renderUsers(users, containerId) {
   const container = document.getElementById(containerId);
   const sectionTitle = container.querySelector('h3').outerHTML;
   container.innerHTML = sectionTitle;
+
+  if (!users || users.length === 0) {
+    container.innerHTML += "<p>No users found.</p>";
+    return;
+  }
 
   users.forEach(user => {
     const el = document.createElement("div");

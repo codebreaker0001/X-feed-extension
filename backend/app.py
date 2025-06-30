@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from twikit import Client
@@ -6,20 +6,25 @@ import asyncio
 
 app = FastAPI()
 
-# ✅ More permissive CORS configuration
+# ✅ Custom CORS middleware for Chrome extensions
+@app.middleware("http")
+async def cors_handler(request: Request, call_next):
+    response = await call_next(request)
+    
+    # Add CORS headers manually
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    
+    return response
+
+# ✅ Also add the standard CORS middleware as backup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://x-feed-extension.up.railway.app",
-        "http://localhost:3000",  # For local development
-        "http://localhost:8000",  # For local development
-        "http://127.0.0.1:3000",  # Alternative localhost
-        "http://127.0.0.1:8000",  # Alternative localhost
-        "chrome-extension://famgpjoalpgadcpcapldkfjnodfijgcj",  # your extension ID
-        "*"  # ⚠️ Use only for development - remove in production
-    ],
+    allow_origins=["*"],  # Allow all origins for Chrome extension compatibility
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -43,10 +48,21 @@ class TokenInput(BaseModel):
 async def root():
     return {"message": "API is running"}
 
-# ✅ Add explicit OPTIONS handler for preflight requests
-@app.options("/{full_path:path}")
+# ✅ Explicit OPTIONS handlers for all endpoints
+@app.options("/timeline")
+@app.options("/getUserTweets") 
+@app.options("/getUserFollowers")
+@app.options("/getUserFollowing")
+@app.options("/getUserFriends")
 async def options_handler():
-    return {"message": "OK"}
+    return Response(
+        content="",
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        }
+    )
 
 @app.post("/timeline")
 async def get_timeline(data: TokenInput):
