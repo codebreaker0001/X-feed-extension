@@ -15,14 +15,10 @@ app = FastAPI()
 app.mount("/media", StaticFiles(directory="media"), name="media")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8000",
-        "https://x-feed-extension.up.railway.app"  ,
-        "chrome-extension://famgpjoalpgadcpcapldkfjnodfijgcj"  # your extension ID
-    ],
+    allow_origins=["*"],  # Allow all origins
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
 )
 
 class TokenInput(BaseModel):

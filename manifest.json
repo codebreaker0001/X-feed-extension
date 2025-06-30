@@ -7,7 +7,7 @@
     "scripting"
   ],
   "host_permissions": [
-    "http://localhost:8000/*"
+    "https://x-feed-extension.up.railway.app"
   ],
   "action": {
     "default_title": "Open Twitter Viewer"
