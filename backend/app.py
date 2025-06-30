@@ -21,6 +21,10 @@ class TokenInput(BaseModel):
     auth_token: str
     ct0: str
 
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the X Feed API!"}
+
 @app.post("/timeline")
 async def get_timeline(data: TokenInput):
     client = Client()
