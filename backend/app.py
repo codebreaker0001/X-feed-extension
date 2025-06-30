@@ -4,11 +4,19 @@ from pydantic import BaseModel
 from twikit import Client
 import asyncio
 
+from fastapi.staticfiles import StaticFiles
+
+# app = FastAPI()
+
+import os 
+
 app = FastAPI()
 
+app.mount("/media", StaticFiles(directory="media"), name="media")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://localhost:8000",
         "https://x-feed-extension.up.railway.app"  ,
         "chrome-extension://famgpjoalpgadcpcapldkfjnodfijgcj"  # your extension ID
     ],
@@ -37,19 +45,41 @@ async def get_timeline(data: TokenInput):
 
     tweet_list = []
 
+    media_dir = "media"
+    os.makedirs(media_dir, exist_ok=True)
     for tweet in tweets:
         media_urls = []
-        try:
-            if hasattr(tweet, "extended_entities") and tweet.extended_entities and "media" in tweet.extended_entities:
-                media_items = tweet.extended_entities["media"]
-                media_urls = [item["media_url_https"] for item in media_items]
-            elif hasattr(tweet, "entities") and tweet.entities and "media" in tweet.entities:
-                media_items = tweet.entities["media"]
-                media_urls = [item["media_url_https"] for item in media_items]
-        except Exception as e:
-            print(f"Error getting media for tweet {tweet.id}: {e}")
-            media_urls = []
-        media_url = media_urls[0] if media_urls else None
+        
+        for i , media in enumerate(tweet.media):
+            
+            file_ext = "jpg"
+            if media.type == "photo":
+                # await media.download(f'media_{i}.jpg')
+                file_ext = "jpg"
+            
+            if media.type == "video":
+                file_ext = "mp4"
+                # await media.streams[-1].download(f'media_{i}.mp4')
+                
+            if media.type == 'animated_gif':
+                file_ext = "mp4"
+                # await media.streams[-1].download(f'media_{i}.mp4')
+                
+            file_name = f"{tweet.id}_{i}.{file_ext}"
+            file_path = os.path.join(media_dir, file_name)
+            
+            if media.type == "photo":
+                await media.download(file_path)
+            elif media.type in ["video", "animated_gif"]:
+                await media.streams[-1].download(file_path)
+
+            media_url = f"/media/{file_name}"
+            media_urls.append({
+                "type": media.type,
+                "url": media_url,
+                "thumbnail": media_url,  # You can use the same for now
+                "video_url": media_url if media.type in ["video", "animated_gif"] else None
+            })
 
         tweet_list.append({
             "id": tweet.id,
@@ -59,51 +89,11 @@ async def get_timeline(data: TokenInput):
             "likes": tweet.favorite_count,
             "retweets": tweet.retweet_count,
             "replies": getattr(tweet, "replies_count", 0),  # ✅ Safe replies count
-            "profile_image": "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png",
+            "profile_image": 'https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png',
             "name": tweet.user.name if tweet.user else "Unknown",
-            "images": media_urls
+            "media": media_urls
         })
-    return {"tweets": tweet_list}
-
-@app.post("/getUserTweets")
-async def get_user_tweets(data: TokenInput):
-    client = Client()
-    client.set_cookies({
-        "auth_token": data.auth_token,
-        "ct0": data.ct0
-    })
-
-    # userId = await client.user_id()
-    tweets = await client.get_user_tweets(count=10)
-
-    tweet_list = []
-
-    for tweet in tweets:
-        media_urls = []
-        try:
-            if hasattr(tweet, "extended_entities") and tweet.extended_entities and "media" in tweet.extended_entities:
-                media_items = tweet.extended_entities["media"]
-                media_urls = [item["media_url_https"] for item in media_items]
-            elif hasattr(tweet, "entities") and tweet.entities and "media" in tweet.entities:
-                media_items = tweet.entities["media"]
-                media_urls = [item["media_url_https"] for item in media_items]
-        except Exception as e:
-            print(f"Error getting media for tweet {tweet.id}: {e}")
-            media_urls = []
-        media_url = media_urls[0] if media_urls else None
-
-        tweet_list.append({
-            "id": tweet.id,
-            "text": getattr(tweet, "full_text", tweet.text),
-            "user": tweet.user.screen_name if tweet.user else "Unknown",
-            "created_at": tweet.created_at,
-            "likes": tweet.favorite_count,
-            "retweets": tweet.retweet_count,
-            "replies": getattr(tweet, "replies_count", 0),  # ✅ Safe replies count
-            "profile_image": "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png",
-            "name": tweet.user.name if tweet.user else "Unknown",
-            "images": media_urls
-        })
+    print(tweet_list)
     return {"tweets": tweet_list}
 
 

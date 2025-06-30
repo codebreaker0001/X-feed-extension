@@ -279,3 +279,54 @@ body.dark-mode .menu-item:hover {
 .dark-mode-toggle:hover span {
   color: #1da1f2;
 }
+
+
+/* === Media Thumbnails (Photos, GIFs, Videos) === */
+.tweet-media {
+  margin-top: 10px;
+}
+
+.tweet-image {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.tweet-image:hover {
+  transform: scale(1.02);
+}
+
+/* === Video/GIF Thumbnail Overlay === */
+.video-thumbnail {
+  position: relative;
+  display: inline-block;
+}
+
+.video-thumbnail .tweet-image {
+  filter: brightness(85%);
+}
+
+.play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 28px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 8px 12px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* === Dark Mode for Video Thumbnails === */
+body.dark-mode .play-icon {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+
+
+/* // "https://x-feed-extension.up.railway.app/*", */

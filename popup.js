@@ -20,14 +20,14 @@ document.getElementById("fetch").addEventListener("click", async () => {
 
 async function fetchSection(endpoint, bodyData, containerId, renderFunction) {
   try {
-    // ✅ Correct API URL
-    const res = await fetch(`https://x-feed-extension.up.railway.app/${endpoint}`, {
+    const res = await fetch(`http://localhost:8000/${endpoint}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(bodyData)
     });
 
     const data = await res.json();
+
     if (endpoint === "timeline") {
       renderFunction(data.tweets, containerId);
     } else if (endpoint === "getUserFollowers") {
@@ -47,9 +47,30 @@ async function fetchSection(endpoint, bodyData, containerId, renderFunction) {
 function renderTweets(tweets, containerId) {
   const container = document.getElementById(containerId);
   container.innerHTML = "";
+
   tweets.forEach(tweet => {
     const el = document.createElement("div");
     el.className = "tweet-card";
+
+    // ✅ Build media HTML separately
+    let mediaHTML = '';
+    if (tweet.media && tweet.media.length > 0) {
+      mediaHTML = tweet.media.map(media => {
+        if (media.type === "photo") {
+          return `<img src="http://localhost:8000${media.url}" class="tweet-image" />`;
+        } else if (media.type === "video" || media.type === "animated_gif") {
+          return `
+            <div class="video-thumbnail" onclick="window.open('http://localhost:8000${media.video_url}', '_blank')">
+              <img src="http://localhost:8000${media.thumbnail}" class="tweet-image" />
+              <div class="play-icon">&#9658;</div>
+            </div>
+          `;
+        } else {
+          return '';
+        }
+      }).join('');
+    }
+
     el.innerHTML = `
       <div class="tweet-header">
         <img src="${tweet.profile_image || 'https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png'}" class="avatar" />
@@ -58,22 +79,26 @@ function renderTweets(tweets, containerId) {
           <span>@${tweet.user}</span>
         </div>
       </div>
+
       <div class="tweet-content">
         <p>${tweet.text}</p>
-        ${tweet.images && tweet.images.length > 0 ? tweet.images.map(img => `<img src="${img}" class="tweet-image" />`).join('') : ''}
+        <div class="tweet-media">
+          ${mediaHTML}
+        </div>
       </div>
+
       <div class="tweet-time">
         ${new Date(tweet.created_at).toLocaleString()}
       </div>
+
       <div class="tweet-actions">
-        <span><i class="far fa-comment"></i></span>
+        <span><i class="far fa-comment"></i> ${tweet.replies || 0}</span>
         <span><i class="fas fa-retweet"></i> <strong>${tweet.retweets}</strong></span>
         <span><i class="far fa-heart"></i> <strong>${tweet.likes}</strong></span>
-        <span><i class="far fa-chart-bar"></i></span>
         <span><i class="fas fa-share"></i></span>
-        <span><i class="far fa-bookmark"></i></span>
       </div>
     `;
+
     container.appendChild(el);
   });
 }
