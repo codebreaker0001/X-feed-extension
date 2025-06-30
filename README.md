@@ -12,38 +12,46 @@ A Chrome Extension + FastAPI-powered backend that allows users to securely view 
 - 🧩 Chrome Extension UI
 - ⚙️ Built-in CORS configuration for development and deployment
 
----
-
-## 🗂 Project Structure
-x-feed-extension/
-├── backend/
-│ ├── app.py # FastAPI backend logic
-│ ├── media/ # Downloaded tweet media (auto-created)
-│ └── requirements.txt # Python dependencies
-├── extension/
-│ ├── popup.html # Extension UI
-│ ├── popup.js # JavaScript logic for fetching & rendering
-│ ├── styles.css # Styles for the extension popup
-│ └── manifest.json # Chrome Extension manifest
-├── README.md # You are here 📘
-
-
----
-
 ## 🛠 Backend Setup (FastAPI)
+Backend deployed at railway -https://x-feed-extension.up.railway.app/
 
-### ✅ Install Python dependencies
+## Frontend 
+Frontend is made using JS , HTML , CSS.
 
-```bash
-cd backend
-pip install -r requirements.txt
+## Project setup 
 
-fastapi
-uvicorn
-twikit
-pydantic
+* Visit chrome://extensions
 
-uvicorn app:app --reload
+* Enable Developer Mode
+
+* Click Load unpacked
+
+* Select the extension/ folder
+
+## Using the extension
+* Enter your auth_token and ct0 (from your browser cookies)
+
+* Click Fetch
+View timeline, followers, following, friends
+Media is displayed from the FastAPI backend
+
+##  How to Get Twitter Tokens
+To use your own account data:
+
+Open https://X.com
+
+Open DevTools → Application → Cookies
+
+Copy:
+
+auth_token
+
+ct0
+
+Paste into the extension
+
+🛡 These tokens are used only in your browser and are not stored or shared.
+
 
 
 
