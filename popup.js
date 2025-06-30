@@ -20,7 +20,8 @@ document.getElementById("fetch").addEventListener("click", async () => {
 
 async function fetchSection(endpoint, bodyData, containerId, renderFunction) {
   try {
-    const res = await fetch(`http://localhost:8000/${endpoint}`, {
+    // ✅ Correct API URL
+    const res = await fetch(`https://x-feed-extension.up.railway.app/${endpoint}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(bodyData)
