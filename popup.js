@@ -8,13 +8,11 @@ document.getElementById("fetch").addEventListener("click", async () => {
 
   // Show loaders
   document.getElementById("feed").innerHTML = '<div class="loader"></div>';
-  document.getElementById("user-tweets").innerHTML = '<h3>User Tweets</h3><div class="loader"></div>';
   document.getElementById("followers").innerHTML = '<h3>Followers</h3><div class="loader"></div>';
   document.getElementById("following").innerHTML = '<h3>Following</h3><div class="loader"></div>';
   document.getElementById("friends").innerHTML = '<h3>Friends</h3><div class="loader"></div>';
 
   fetchSection("timeline", { auth_token, ct0 }, "feed", renderTweets);
-  fetchSection("getUserTweets", { auth_token, ct0 }, "user-tweets", renderTweets);
   fetchSection("getUserFollowers", { auth_token, ct0 }, "followers", renderUsers);
   fetchSection("getUserFollowing", { auth_token, ct0 }, "following", renderUsers);
   fetchSection("getUserFriends", { auth_token, ct0 }, "friends", renderUsers);
@@ -29,7 +27,7 @@ async function fetchSection(endpoint, bodyData, containerId, renderFunction) {
     });
 
     const data = await res.json();
-    if (endpoint === "timeline" || endpoint === "getUserTweets") {
+    if (endpoint === "timeline") {
       renderFunction(data.tweets, containerId);
     } else if (endpoint === "getUserFollowers") {
       renderFunction(data.followers, containerId);

@@ -7,18 +7,34 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="top-bar">
-    <label class="switch">
-      <input type="checkbox" id="toggle-theme">
-      <span class="slider"></span>
-    </label>
-  </div>
-
+  <!-- Page Container -->
   <div class="page-container">
 
-    <!-- Left Section: User Tweets -->
-    <div class="sidebar" id="user-tweets">
-      <h3>User Tweets</h3>
+    <!-- Left Sidebar: Twitter Menu -->
+    <div class="sidebar" id="twitter-menu">
+      <ul class="menu">
+        <li class="menu-item"><i class="fab fa-x-twitter"></i></li>
+        <li class="menu-item active"><i class="fas fa-home"></i> Home</li>
+        <li class="menu-item"><i class="fas fa-hashtag"></i> Explore</li>
+        <li class="menu-item"><i class="far fa-bell"></i> Notifications</li>
+        <li class="menu-item"><i class="far fa-envelope"></i> Messages</li>
+        <li class="menu-item"><i class="fas fa-compass"></i> Grok</li>
+        <li class="menu-item"><i class="far fa-bookmark"></i> Bookmarks</li>
+        <li class="menu-item"><i class="fas fa-users"></i> Communities</li>
+        <li class="menu-item"><i class="fas fa-gem"></i> Premium</li> <!-- ✅ Fixed Icon -->
+        <li class="menu-item"><i class="fas fa-bolt"></i> Verified Orgs</li>
+        <li class="menu-item"><i class="far fa-user"></i> Profile</li>
+        <li class="menu-item"><i class="fas fa-ellipsis-h"></i> More</li>
+      </ul>
+
+      <!-- ✅ Dark Mode Toggle -->
+      <div class="dark-mode-toggle">
+        <label class="switch">
+          <input type="checkbox" id="toggle-theme">
+          <span class="slider"></span>
+        </label>
+        <span></span>
+      </div>
     </div>
 
     <!-- Middle Section: Feed -->
@@ -30,7 +46,7 @@
       <div id="feed"></div>
     </div>
 
-    <!-- Right Section: Followers, Following, Friends -->
+    <!-- Right Sidebar -->
     <div class="sidebar right-sidebar">
       <div class="user-section" id="followers">
         <h3>Followers</h3>

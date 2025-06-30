@@ -19,14 +19,57 @@ body, html {
   height: calc(100vh - 50px);
 }
 
-/* Sidebars */
+/* === Sidebar (X Menu) === */
 .sidebar {
-  width: 25%;
+  width: 20%;
   padding: 10px;
   border-right: 0.1px solid #d3d3d3;
   overflow-y: auto;
 }
 
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 20px;
+  border-radius: 9999px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  font-size: 20px;
+  transition: background-color 0.2s;
+}
+
+.menu-item span {
+  font-size: 18px;
+}
+
+.menu-item:hover {
+  background-color: rgba(29, 161, 242, 0.1);
+}
+
+.menu-item.active {
+  font-weight: bold;
+}
+
+.post-button {
+  width: 80%;
+  margin: 20px auto 0;
+  padding: 12px 0;
+  background-color: #1da1f2;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: block;
+}
+
+.post-button:hover {
+  background-color: #0c85d0;
+}
+
+/* === Right Sidebar === */
 .right-sidebar {
   border-left: 0.1px solid #d3d3d3;
 }
@@ -38,9 +81,9 @@ body, html {
   padding-right: 5px;
 }
 
-/* Main Feed */
+/* === Main Feed === */
 .main-feed {
-  width: 50%;
+  width: 60%;
   padding: 20px;
   overflow-y: auto;
 }
@@ -56,7 +99,7 @@ input, button {
 
 button {
   background-color: #1da1f2;
-  color: #ffffff;
+  color: white;
   font-weight: 600;
   cursor: pointer;
 }
@@ -127,40 +170,20 @@ button:hover {
   transition: transform 0.2s;
 }
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 20px;
-}
-
-.switch input { display: none; }
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #ccc;
-  border-radius: 20px;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px; width: 16px;
-  left: 2px; bottom: 2px;
-  background-color: white;
+/* === Loader === */
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #1da1f2;
   border-radius: 50%;
-  transition: .4s;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
 }
 
-input:checked + .slider {
-  background-color: #1da1f2;
-}
-
-input:checked + .slider:before {
-  transform: translateX(20px);
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* === Dark Mode === */
@@ -175,7 +198,8 @@ body.dark-mode .sidebar {
 }
 
 body.dark-mode input,
-body.dark-mode button {
+body.dark-mode button,
+body.dark-mode .post-button {
   background-color: #192734;
   color: white !important;
   border: 1px solid #38444d;
@@ -201,18 +225,57 @@ body.dark-mode .tweet-actions span:hover {
   color: #1da1f2;
 }
 
-/* === Loader === */
-.loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #1da1f2;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  animation: spin 1s linear infinite;
-  margin: 20px auto;
+body.dark-mode .menu-item:hover {
+  background-color: rgba(29, 161, 242, 0.2);
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* === Twitter Menu === */
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 10px;
+  border-radius: 25px;
+  margin-bottom: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.menu-item i {
+  margin-right: 12px;
+  font-size: 20px;
+}
+
+.menu-item:hover {
+  background-color: rgba(29, 161, 242, 0.1);
+  color: #1da1f2;
+}
+
+.menu-item.active {
+  font-weight: bold;
+  color: #1da1f2;
+}
+
+/* === Dark Mode Toggle Styling === */
+.dark-mode-toggle {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.dark-mode-toggle span {
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+/* Optional: Add a little hover effect for dark mode toggle */
+.dark-mode-toggle:hover span {
+  color: #1da1f2;
 }
