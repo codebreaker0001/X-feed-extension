@@ -6,20 +6,47 @@ import asyncio
 
 app = FastAPI()
 
+# ✅ More permissive CORS configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://x-feed-extension.up.railway.app",
-        "chrome-extension://famgpjoalpgadcpcapldkfjnodfijgcj"  # your extension ID
+        "http://localhost:3000",  # For local development
+        "http://localhost:8000",  # For local development
+        "http://127.0.0.1:3000",  # Alternative localhost
+        "http://127.0.0.1:8000",  # Alternative localhost
+        "chrome-extension://famgpjoalpgadcpcapldkfjnodfijgcj",  # your extension ID
+        "*"  # ⚠️ Use only for development - remove in production
     ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Alternative: More secure production configuration
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=[
+#         "https://x-feed-extension.up.railway.app",
+#         "chrome-extension://famgpjoalpgadcpcapldkfjnodfijgcj"
+#     ],
+#     allow_credentials=True,
+#     allow_methods=["GET", "POST", "OPTIONS"],
+#     allow_headers=["Content-Type", "Authorization"],
+# )
 
 class TokenInput(BaseModel):
     auth_token: str
     ct0: str
+
+@app.get("/")
+async def root():
+    return {"message": "API is running"}
+
+# ✅ Add explicit OPTIONS handler for preflight requests
+@app.options("/{full_path:path}")
+async def options_handler():
+    return {"message": "OK"}
 
 @app.post("/timeline")
 async def get_timeline(data: TokenInput):
@@ -45,7 +72,6 @@ async def get_timeline(data: TokenInput):
         except Exception as e:
             print(f"Error getting media for tweet {tweet.id}: {e}")
             media_urls = []
-        media_url = media_urls[0] if media_urls else None
 
         tweet_list.append({
             "id": tweet.id,
@@ -54,7 +80,7 @@ async def get_timeline(data: TokenInput):
             "created_at": tweet.created_at,
             "likes": tweet.favorite_count,
             "retweets": tweet.retweet_count,
-            "replies": getattr(tweet, "replies_count", 0),  # ✅ Safe replies count
+            "replies": getattr(tweet, "replies_count", 0),
             "profile_image": "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png",
             "name": tweet.user.name if tweet.user else "Unknown",
             "images": media_urls
@@ -69,9 +95,7 @@ async def get_user_tweets(data: TokenInput):
         "ct0": data.ct0
     })
 
-    # userId = await client.user_id()
     tweets = await client.get_user_tweets(count=10)
-
     tweet_list = []
 
     for tweet in tweets:
@@ -86,7 +110,6 @@ async def get_user_tweets(data: TokenInput):
         except Exception as e:
             print(f"Error getting media for tweet {tweet.id}: {e}")
             media_urls = []
-        media_url = media_urls[0] if media_urls else None
 
         tweet_list.append({
             "id": tweet.id,
@@ -95,18 +118,15 @@ async def get_user_tweets(data: TokenInput):
             "created_at": tweet.created_at,
             "likes": tweet.favorite_count,
             "retweets": tweet.retweet_count,
-            "replies": getattr(tweet, "replies_count", 0),  # ✅ Safe replies count
+            "replies": getattr(tweet, "replies_count", 0),
             "profile_image": "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png",
             "name": tweet.user.name if tweet.user else "Unknown",
             "images": media_urls
         })
     return {"tweets": tweet_list}
 
-
-
 @app.post("/getUserFollowers")
-
-async def get_user_followers(data :TokenInput):
+async def get_user_followers(data: TokenInput):
     client = Client()
     client.set_cookies({
         "auth_token": data.auth_token,
@@ -116,20 +136,16 @@ async def get_user_followers(data :TokenInput):
     userId = await client.user_id()
     followers = await client.get_user_followers(userId, count=10)
 
-    for f in followers:
-        print(f)
     follower_list = []
-
     for follower in followers:
         follower_list.append({
             "id": follower.id,
             "name": follower.name,
             "screen_name": follower.screen_name,
-            # "profile_image": follower.profile_image_url_https
+            "profile_image": getattr(follower, 'profile_image_url_https', 'https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png')
         })
     
     return {"followers": follower_list}
-
 
 @app.post("/getUserFollowing")
 async def get_user_following(data: TokenInput):
@@ -139,20 +155,16 @@ async def get_user_following(data: TokenInput):
         "ct0": data.ct0
     })
 
-    userId = await  client.user_id()
+    userId = await client.user_id()
     following = await client.get_user_following(userId, count=10)
 
-    
-    for f in following:
-        print(f)
     following_list = []
-
     for user in following:
         following_list.append({
             "id": user.id,
             "name": user.name,
             "screen_name": user.screen_name,
-            # "profile_image": user.profile_image_url_https
+            "profile_image": getattr(user, 'profile_image_url_https', 'https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png')
         })
     
     return {"following": following_list}
@@ -169,17 +181,12 @@ async def get_user_friends(data: TokenInput):
     friends = await client.get_latest_friends(userId, count=10)
 
     friend_list = []
-
     for friend in friends:
         friend_list.append({
             "id": friend.id,
             "name": friend.name,
             "screen_name": friend.screen_name,
-            # "profile_image": friend.profile_image_url_https
+            "profile_image": getattr(friend, 'profile_image_url_https', 'https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png')
         })
     
     return {"friends": friend_list}
-
-
-
-# asyncio.run(get_user_followers())
