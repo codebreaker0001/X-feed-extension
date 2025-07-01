@@ -20,7 +20,7 @@ document.getElementById("fetch").addEventListener("click", async () => {
 
 async function fetchSection(endpoint, bodyData, containerId, renderFunction) {
   try {
-    const res = await fetch(`http://x-feed-extension.up.railway.app/${endpoint}`, {
+    const res = await fetch(`https://x-feed-extension.up.railway.app/${endpoint}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(bodyData)
@@ -57,10 +57,10 @@ function renderTweets(tweets, containerId) {
     if (tweet.media && tweet.media.length > 0) {
       mediaHTML = tweet.media.map(media => {
         if (media.type === "photo") {
-          return `<img src="http://x-feed-extension.up.railway.app${media.url}" class="tweet-image" />`;
+          return `<img src="https://x-feed-extension.up.railway.app${media.url}" class="tweet-image" />`;
         } else if (media.type === "video" || media.type === "animated_gif") {
           return `
-            <div class="video-thumbnail" onclick="window.open('http://x-feed-extension.up.railway.app${media.video_url}', '_blank')">
+            <div class="video-thumbnail" onclick="window.open('https://x-feed-extension.up.railway.app${media.video_url}', '_blank')">
               <img src="http://localhost:8000${media.thumbnail}" class="tweet-image" />
               <div class="play-icon">&#9658;</div>
             </div>
